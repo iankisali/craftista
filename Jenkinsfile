@@ -1,28 +1,24 @@
 pipeline {
-    agent any
-    tools {
-        maven 'Maven 3.9.9'
-    }
-        stages {
-            stage("Voting Build") {
-                steps {
-                    echo 'Compiling the voting application..'
-                    dir('voting') {
-                        sh 'mvn compile'
-                    }
-                }
-            }
-
-
-            // stage("") {
-            //     steps {
-                    
-            //     }
-            // }
+  agent any
+  stages {
+    stage('Voting Build') {
+      steps {
+        echo 'Compiling the voting application..'
+        dir(path: 'voting') {
+          sh 'mvn compile'
         }
-    post {
-        always {
-            echo 'completed the pipeline craftista'
-        }
+
+      }
     }
+
+  }
+  tools {
+    maven 'Maven 3.9.9'
+  }
+  post {
+    always {
+      echo 'completed the pipeline craftista'
+    }
+
+  }
 }
