@@ -41,17 +41,18 @@ pipeline {
             }
 
           }
+          when { branch 'main' }
           steps {
             dir(path: 'voting') {
               sh 'mvn package -DskipTests'
+            }
               archiveArtifacts '**/target/*.jar'
             }
-
           }
-        }
 
         stage('Voting Image B&P') {
           agent any
+          when { branch 'main' }
           steps {
             script {
               docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
