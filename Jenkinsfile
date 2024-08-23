@@ -41,18 +41,23 @@ pipeline {
             }
 
           }
-          when { branch 'main' }
+          when {
+            branch 'main'
+          }
           steps {
             dir(path: 'voting') {
               sh 'mvn package -DskipTests'
             }
-              archiveArtifacts '**/target/*.jar'
-            }
+
+            archiveArtifacts '**/target/*.jar'
           }
+        }
 
         stage('Voting Image B&P') {
           agent any
-          when { branch 'main' }
+          when {
+            branch 'main'
+          }
           steps {
             script {
               docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
@@ -60,10 +65,55 @@ pipeline {
                 def dockerImage = docker.build("iankisali/craftista-voting:${commitHash}", "./voting")
                 dockerImage.push()
                 dockerImage.push("latest")
-                dockerImage.push("dev")
               }
             }
 
+          }
+        }
+
+      }
+    }
+
+    stage('Frontend Build') {
+      agent {
+        docker {
+          image 'node:latest'
+        }
+
+      }
+      steps {
+        dir(path: 'frontend') {
+          sh 'npm install'
+        }
+
+      }
+    }
+
+    stage('Frontend test') {
+      agent {
+        docker {
+          image 'node:latest'
+        }
+
+      }
+      steps {
+        dir(path: 'frontend') {
+          sh '''npm install
+npm test'''
+        }
+
+      }
+    }
+
+    stage('Frontend image B&P') {
+      agent any
+      steps {
+        script {
+          docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
+            def commitHash = env.GIT_COMMIT.take(7)
+            def dockerImage = docker.build("iankisali/craftista-frontend:${commitHash}", "./frontend")
+            dockerImage.push()
+            dockerImage.push("latest")
           }
         }
 
