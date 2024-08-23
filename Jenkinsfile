@@ -11,6 +11,25 @@ pipeline {
       }
     }
 
+    stage('Test Job') {
+      steps {
+        dir(path: 'voting') {
+          sh 'mvn clean test'
+        }
+
+      }
+    }
+
+    stage('Voting Package') {
+      steps {
+        dir(path: 'voting') {
+          sh 'mvn package -DskipTests'
+          archiveArtifacts '**/target/*.jar'
+        }
+
+      }
+    }
+
   }
   tools {
     maven 'Maven 3.9.9'
