@@ -3,7 +3,7 @@
 # ----------------------------------------------
 
 # Using Python base image based on alpine
-FROM python:3.12.5-alpine3.19
+FROM python:3.12.10-alpine3.21
 
 # Set the working directory inside the container
 WORKDIR /app
