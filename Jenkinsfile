@@ -1,7 +1,7 @@
 pipeline {
   agent none
   stages {
-    stage('Voting Build') {
+    stage('Voting Build Stage') {
       agent {
         docker {
           image 'maven:3.9.9-eclipse-temurin-17-alpine'
@@ -9,7 +9,7 @@ pipeline {
 
       }
       steps {
-        echo 'Compiling the voting application..'
+        echo 'Compiling voting app...'
         dir(path: 'voting') {
           sh 'mvn compile'
         }
@@ -17,7 +17,7 @@ pipeline {
       }
     }
 
-    stage('Test Job') {
+    stage('Voting Test Stage') {
       agent {
         docker {
           image 'maven:3.9.9-eclipse-temurin-17-alpine'
@@ -32,18 +32,15 @@ pipeline {
       }
     }
 
-    stage('Voting Package') {
+    stage('Voting Package Stage') {
       parallel {
-        stage('Voting Package') {
+        stage('Voting Package Stage') {
           agent {
             docker {
               image 'maven:3.9.9-eclipse-temurin-17-alpine'
             }
-
           }
-          when {
-            branch 'main'
-          }
+          when { branch 'main' }
           steps {
             dir(path: 'voting') {
               sh 'mvn package -DskipTests'
@@ -53,18 +50,17 @@ pipeline {
           }
         }
 
-        stage('Voting Image B&P') {
+        stage('Voting Build and Package Image') {
           agent any
-          when {
-            branch 'main'
-          }
+          when { branch 'main' }
           steps {
             script {
-              docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
+              docker.withRegistry('https://index.docker.io/v1/', '1a345b27-4422-4d9e-a238-a2b2d854faa5') {
                 def commitHash = env.GIT_COMMIT.take(7)
                 def dockerImage = docker.build("iankisali/craftista-voting:${commitHash}", "./voting")
                 dockerImage.push()
                 dockerImage.push("latest")
+                dockerImage.push("dev")
               }
             }
 
