@@ -77,7 +77,7 @@ pipeline {
     stage('Frontend Build') {
       agent {
         docker {
-          image 'node:latest'
+          image 'node:23-alpine3.20'
         }
 
       }
@@ -92,7 +92,7 @@ pipeline {
     stage('Frontend test') {
       agent {
         docker {
-          image 'node:latest'
+          image 'node:23-alpine3.20'
         }
 
       }
@@ -109,7 +109,7 @@ npm test'''
       agent any
       steps {
         script {
-          docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
+          docker.withRegistry('https://index.docker.io/v1/', '1a345b27-4422-4d9e-a238-a2b2d854faa5') {
             def commitHash = env.GIT_COMMIT.take(7)
             def dockerImage = docker.build("iankisali/craftista-frontend:${commitHash}", "./frontend")
             dockerImage.push()
