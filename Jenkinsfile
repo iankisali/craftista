@@ -39,7 +39,7 @@ pipeline {
             docker {
               image 'maven:3.9.9-eclipse-temurin-17-alpine'
             }
-
+          when { branch 'main' }
           }
           steps {
             dir(path: 'voting') {
@@ -52,6 +52,7 @@ pipeline {
 
         stage('Voting Build and Package Image') {
           agent any
+          when { branch 'main' }
           steps {
             script {
               docker.withRegistry('https://index.docker.io/v1/', '1a345b27-4422-4d9e-a238-a2b2d854faa5') {
