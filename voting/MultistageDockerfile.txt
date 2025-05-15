@@ -1,0 +1,26 @@
+# First Stage: Build the application using Maven
+FROM maven:3.9.9-eclipse-temurin-17 AS builder
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the Maven project files (pom.xml, src/) to the container
+COPY pom.xml .
+
+# Build the application while skipping tests
+RUN mvn package
+
+# Second Stage: Create a minimal image for running the application
+FROM openjdk:23-bullseye
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the built jar file from the first stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Expose the port the app will run on
+EXPOSE 8080
+
+# Command to run the application
+CMD ["java", "-jar", "app.jar"]

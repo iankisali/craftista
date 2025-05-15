@@ -1,5 +1,5 @@
 pipeline {
-  agent none
+  agent any
   stages {
     stage('Voting Build Stage') {
       agent {
@@ -122,7 +122,7 @@ npm test'''
   }
   post {
     always {
-      echo 'completed the pipeline craftista'
+      echo 'Pipeline completed..'
     }
 
   }
